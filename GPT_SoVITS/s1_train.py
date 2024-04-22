@@ -52,12 +52,11 @@ class my_model_ckpt(ModelCheckpoint):
         self.config = config
 
     def on_train_epoch_end(self, trainer, pl_module):
-        # if not self._should_skip_saving_checkpoint(trainer) and self._should_save_on_train_epoch_end(trainer):
-        if self._should_save_on_train_epoch_end(trainer):
+        if True:
             monitor_candidates = self._monitor_candidates(trainer)
             if (
-                self._every_n_epochs >= 1
-                and (trainer.current_epoch + 1) % self._every_n_epochs == 0
+                trainer.current_epoch + 1 == self.config["train"]["epochs"] or (self._every_n_epochs >= 1
+                and (trainer.current_epoch + 1) % self._every_n_epochs == 0)
             ):
                 if (
                     self.if_save_latest == True

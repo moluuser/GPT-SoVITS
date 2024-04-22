@@ -471,9 +471,9 @@ def get_tts_wav(ref_wav_path, prompt_text, prompt_language, text, text_language)
         t4 = ttime()
         audio_bytes = pack_audio(audio_bytes,(np.concatenate(audio_opt, 0) * 32768).astype(np.int16),hps.data.sampling_rate)
     # logger.info("%.3f\t%.3f\t%.3f\t%.3f" % (t1 - t0, t2 - t1, t3 - t2, t4 - t3))
-        if stream_mode == "normal":
-            audio_bytes, audio_chunk = read_clean_buffer(audio_bytes)
-            yield audio_chunk
+    #     if stream_mode == "normal":
+    #         audio_bytes, audio_chunk = read_clean_buffer(audio_bytes)
+    #         yield audio_chunk
     
     if not stream_mode == "normal": 
         if media_type == "wav":
@@ -632,6 +632,7 @@ if args.stream_mode.lower() in ["normal","n"]:
 else:
     stream_mode = "close"
 
+stream_mode = "close"
 # 音频编码格式
 if args.media_type.lower() in ["aac","ogg"]:
     media_type = args.media_type.lower()
@@ -661,9 +662,9 @@ change_gpt_weights(gpt_path)
 # --------------------------------
 # 接口部分
 # --------------------------------
-app = FastAPI()
+# app = FastAPI()
 
-@app.post("/set_model")
+# @app.post("/set_model")
 async def set_model(request: Request):
     json_post_raw = await request.json()
     global gpt_path
@@ -676,18 +677,18 @@ async def set_model(request: Request):
     return "ok"
 
 
-@app.post("/control")
+# @app.post("/control")
 async def control(request: Request):
     json_post_raw = await request.json()
     return handle_control(json_post_raw.get("command"))
 
 
-@app.get("/control")
+# @app.get("/control")
 async def control(command: str = None):
     return handle_control(command)
 
 
-@app.post("/change_refer")
+# @app.post("/change_refer")
 async def change_refer(request: Request):
     json_post_raw = await request.json()
     return handle_change(
@@ -697,7 +698,7 @@ async def change_refer(request: Request):
     )
 
 
-@app.get("/change_refer")
+# @app.get("/change_refer")
 async def change_refer(
         refer_wav_path: str = None,
         prompt_text: str = None,
@@ -706,7 +707,7 @@ async def change_refer(
     return handle_change(refer_wav_path, prompt_text, prompt_language)
 
 
-@app.post("/")
+# @app.post("/")
 async def tts_endpoint(request: Request):
     json_post_raw = await request.json()
     return handle(
@@ -719,7 +720,7 @@ async def tts_endpoint(request: Request):
     )
 
 
-@app.get("/")
+# @app.get("/")
 async def tts_endpoint(
         refer_wav_path: str = None,
         prompt_text: str = None,
@@ -732,4 +733,5 @@ async def tts_endpoint(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=host, port=port, workers=1)
+    pass
+    # uvicorn.run(app, host=host, port=port, workers=1)
